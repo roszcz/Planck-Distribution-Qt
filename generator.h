@@ -21,12 +21,15 @@ class Generator : public QObject
     QVector<double> lambPovFive;
     QTimer *timer;
     deviceParams params;
-    int normConst;
+    double normConst;
 
     void prepareDimensionHacks();
     void prepareVectors();
+    inline double tempConv(int);
 public:
     explicit Generator(QObject *parent = 0);
+public slots:
+    void changePeriod();
 
 signals:
     void sendQVectors(QVector<double>);

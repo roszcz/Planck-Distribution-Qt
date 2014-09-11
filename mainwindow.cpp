@@ -43,6 +43,9 @@ void MainWindow::initGenerator(){
                      this,SLOT(readParams()));
     QObject::connect(ui->lineInTemp,SIGNAL(editingFinished()),
                      this,SLOT(readParams()));
+    // PERIOD CONNECTION
+    QObject::connect(ui->lineInPeriod,SIGNAL(editingFinished()),
+                     generator,SLOT(changePeriod()));
 }
 
 void MainWindow::initPLOT(){
@@ -50,14 +53,20 @@ void MainWindow::initPLOT(){
     for(int i = 0; i < RESOLUTION; ++i){
         lambVecGUI[i] = i + 1;
     }
+    QString xLabel;
+    xLabel = QString::fromUtf8("λ [nm]");
+    QFont font("Times", 12, QFont::Bold);
 
     ui->customPlot->addGraph();
     ui->customPlot->setWindowTitle("Planck's Distribution");
     ui->customPlot->graph(0)->setData(lambVecGUI,spectrumGUI);
-    ui->customPlot->xAxis->setLabel("iksy uszanowanko");
-    ui->customPlot->yAxis->setLabel("yki szalom");
-    ui->customPlot->xAxis->setRange(0,RESOLUTION);
-    ui->customPlot->yAxis->setRange(0,2.3);
+    ui->customPlot->xAxis->setLabel(xLabel);
+    ui->customPlot->xAxis->setLabelFont(font);
+    ui->customPlot->yAxis->setLabelFont(font);
+    ui->customPlot->yAxis->setLabel("Radiance [arb.unit.]");
+
+    ui->customPlot->xAxis->setRange(1,2000);
+    ui->customPlot->yAxis->setRange(0,4);
     ui->customPlot->replot();
 }
 void MainWindow::refreshPlot(){
@@ -114,17 +123,17 @@ void MainWindow::initGUI(){
     ui->labNoise->setText(noiseStr);
 
     // INPUT VALIDATORS
-    ui->lineInTemp->setValidator(new QIntValidator(1,6000,this));
+    ui->lineInTemp->setValidator(new QIntValidator(0,1000,this));
     ui->lineInLambdaMin->setValidator(new QIntValidator(1,2000,this));
     ui->lineInLambdaMax->setValidator(new QIntValidator(1,2000,this));
     ui->lineInNoise->setValidator(new QIntValidator(0,100,this));
-    ui->lineInPeriod->setValidator(new QIntValidator(1,2000,this));
+    ui->lineInPeriod->setValidator(new QIntValidator(20,2000,this));
 
     // INITIAL VALUES
     ui->lineInLambdaMin->setText(QString::number(1));
     ui->lineInLambdaMax->setText(QString::number(2000));
     ui->lineInTemp->setText(QString::number(137));
-    ui->lineInPeriod->setText(QString::number(1000));
+    ui->lineInPeriod->setText(QString::number(100));
     ui->lineInNoise->setText(QString::number(7));
 
 

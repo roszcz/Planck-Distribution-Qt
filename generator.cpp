@@ -11,16 +11,17 @@ Generator::Generator(QObject *parent) :
     QObject::connect(timer,SIGNAL(timeout()),
                      this,SLOT(doStuff()));
     prepareDimensionHacks();
-    timer->setInterval(100);
+//    timer->setInterval(100);
 
 }
 void Generator::prepareDimensionHacks(){
     for (int i = 0; i < RESOLUTION; ++i){
         // lambda = [0,....,2];
-        lambVec[i] = i/(RESOLUTION-1.);
+        lambVec[i] = (1.0+i)/RESOLUTION;
         lambPovFive[i] = pow(lambVec[i],-5);
     }
-    normConst = pow(3.14,-4)*15.0;
+    normConst = 15.0/pow(3.1415,4);
+    qDebug() << normConst;
 }
 
 void Generator::doStuff(){
@@ -40,14 +41,27 @@ void Generator::prepareVectors(){
 //        lambVec[i] = i + 1;
 //        spectrum[i] = pow( (i-1024.0+params.temp)/1024.0, 2 ) +
 //                      params.noise*(rand()%100)/10000.;
-        spectrum[i] = lambVec[i]*2.0 +
+        spectrum[i] = normConst*lambPovFive[i]*
+                      1.0/(exp(1.0/(lambVec[i]*tempConv(params.temp)))-1) +
                       params.noise*(rand()%100)/10000.0;
     }
 }
+
+/*! dla jednostkowej wygody temperatura transformuje sie
+ * z przedzialo 0 - 1000 od przedzialu 0.4 - 1
+ */
+inline double Generator::tempConv(int T){
+    return 0.4 + 0.6*T/1000;
+}
+void Generator::changePeriod(){
+    timer->setInterval(params.period);
+}
+
 void Generator::startStop(bool test){
 
     if (test){
         qDebug() << "true" << spectrum[rand()%RESOLUTION];
+        changePeriod();
         startTimer();
 
     }else{
