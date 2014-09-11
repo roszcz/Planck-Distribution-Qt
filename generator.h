@@ -4,34 +4,46 @@
 #include <QObject>
 #include <QVector>
 #include <QTimer>
+#include <math.h>
+
+
+struct deviceParams {
+    int temp;
+    int period;
+    int noise;
+};
 
 class Generator : public QObject
 {
     Q_OBJECT
     QVector<double> spectrum;
     QVector<double> lambVec;
+    QVector<double> lambPovFive;
     QTimer *timer;
-    int TEMP;
+    deviceParams params;
+    int normConst;
 
+    void prepareDimensionHacks();
     void prepareVectors();
 public:
     explicit Generator(QObject *parent = 0);
 
 signals:
-    void sendQVectors(QVector<double>,QVector<double>);
-    void getParams();
+    void sendQVectors(QVector<double>);
+    void requestParams();
+
 
 
 public slots:
     void startStop(bool);
-//    void sendParams();
-    void testing();
+    void getParams(int,int,int);
+    void doStuff();
     void startTimer(){timer->start();}
     void stopTimer(){timer->stop();}
 
 
 private:
-    enum { RESOLUTION = 321 };
+    enum { RESOLUTION = 2048 };
 
 };
 

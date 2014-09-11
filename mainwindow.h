@@ -9,6 +9,13 @@
 namespace Ui {
 class MainWindow;
 }
+struct guiParams{
+    int lambdaMin;
+    int lambdaMax;
+    int temp;
+    int period;
+    int noise;
+};
 
 class MainWindow : public QMainWindow
 {
@@ -17,13 +24,19 @@ class MainWindow : public QMainWindow
     QVector<double> lambVecGUI;
     Generator *generator;
     QThread *thread;
+    guiParams params;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+signals:
+    void sendParams(int,int,int);
 
 public slots:
-    void getQVectors(QVector<double>,QVector<double>);
+    void getQVectors(QVector<double>);
+    void renameButton(bool);
+    void readParams();
+    void testSLOT(){qDebug() << "HALO";}
 
 private:
     Ui::MainWindow *ui;
@@ -33,7 +46,8 @@ private:
     void initGenerator();
     void refreshPlot();
 
-    enum { RESOLUTION = 321 };
+
+    enum { RESOLUTION = 2048 };
 
 
 

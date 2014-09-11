@@ -5,30 +5,44 @@ Generator::Generator(QObject *parent) :
     QObject(parent),
     spectrum(RESOLUTION),
     lambVec(RESOLUTION),
-    timer(new QTimer(this)),
-    TEMP(137)
+    lambPovFive(RESOLUTION),
+    timer(new QTimer(this))
 {
     QObject::connect(timer,SIGNAL(timeout()),
-                     this,SLOT(testing()));
-    timer->setInterval(10);
+                     this,SLOT(doStuff()));
+    prepareDimensionHacks();
+    timer->setInterval(100);
 
 }
-void Generator::testing(){
-    prepareVectors();
-    qDebug() << spectrum[rand()%RESOLUTION];
-    emit sendQVectors(lambVec,spectrum);
-    qDebug() << "vectors sent";
-
-}
-void Generator::prepareVectors(){
-
-    for(int i = 0; i < RESOLUTION; ++i){
-        lambVec[i] = i + 1;
-        spectrum[i] = pow( (i-160.0)/160.0, 2 ) + (rand()%100)/600.;
+void Generator::prepareDimensionHacks(){
+    for (int i = 0; i < RESOLUTION; ++i){
+        // lambda = [0,....,2];
+        lambVec[i] = i/(RESOLUTION-1.);
+        lambPovFive[i] = pow(lambVec[i],-5);
     }
+    normConst = pow(3.14,-4)*15.0;
+}
 
-    qDebug() << spectrum[123] << "sda";
+void Generator::doStuff(){
+    prepareVectors();
+    emit sendQVectors(spectrum);
 
+}
+// SLOT
+void Generator::getParams(int temp, int period, int noise){
+    params.temp = temp;
+    params.period = period;
+    params.noise = noise;
+}
+
+void Generator::prepareVectors(){
+    for(int i = 0; i < RESOLUTION; ++i){
+//        lambVec[i] = i + 1;
+//        spectrum[i] = pow( (i-1024.0+params.temp)/1024.0, 2 ) +
+//                      params.noise*(rand()%100)/10000.;
+        spectrum[i] = lambVec[i]*2.0 +
+                      params.noise*(rand()%100)/10000.0;
+    }
 }
 void Generator::startStop(bool test){
 

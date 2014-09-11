@@ -3,6 +3,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
+    lambVecGUI(RESOLUTION),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -20,32 +21,69 @@ void MainWindow::initGenerator(){
     // CONNECT WITH THREAD
     QObject::connect(ui->buttonStartStop,SIGNAL(clicked(bool)),
                      generator,SLOT(startStop(bool)));
-    QObject::connect(generator,SIGNAL(sendQVectors(QVector<double>,QVector<double>)),
-                     this,SLOT(getQVectors(QVector<double>,QVector<double>)));
+    QObject::connect(ui->buttonStartStop,SIGNAL(clicked(bool)),
+                     this,SLOT(renameButton(bool)));
+    QObject::connect(generator,SIGNAL(sendQVectors(QVector<double>)),
+                     this,SLOT(getQVectors(QVector<double>)));
+    QObject::connect(generator,SIGNAL(requestParams()),
+                     this,SLOT(readParams()));
+    QObject::connect(this,SIGNAL(sendParams(int,int,int)),
+                     generator,SLOT(getParams(int,int,int)));
     // START THREAD
     thread->start();
+
+    // EDITING PARAMETERS @GUI
+    QObject::connect(ui->lineInLambdaMax,SIGNAL(editingFinished()),
+                     this,SLOT(readParams()));
+    QObject::connect(ui->lineInLambdaMin,SIGNAL(editingFinished()),
+                     this,SLOT(readParams()));
+    QObject::connect(ui->lineInNoise,SIGNAL(editingFinished()),
+                     this,SLOT(readParams()));
+    QObject::connect(ui->lineInPeriod,SIGNAL(editingFinished()),
+                     this,SLOT(readParams()));
+    QObject::connect(ui->lineInTemp,SIGNAL(editingFinished()),
+                     this,SLOT(readParams()));
 }
 
 void MainWindow::initPLOT(){
+    readParams();
+    for(int i = 0; i < RESOLUTION; ++i){
+        lambVecGUI[i] = i + 1;
+    }
+
     ui->customPlot->addGraph();
+    ui->customPlot->setWindowTitle("Planck's Distribution");
     ui->customPlot->graph(0)->setData(lambVecGUI,spectrumGUI);
     ui->customPlot->xAxis->setLabel("iksy uszanowanko");
     ui->customPlot->yAxis->setLabel("yki szalom");
     ui->customPlot->xAxis->setRange(0,RESOLUTION);
-    ui->customPlot->yAxis->setRange(0,1.3);
+    ui->customPlot->yAxis->setRange(0,2.3);
     ui->customPlot->replot();
 }
 void MainWindow::refreshPlot(){
     ui->customPlot->graph(0)->setData(lambVecGUI,spectrumGUI);
+    ui->customPlot->xAxis->setRange(params.lambdaMin,params.lambdaMax);
     ui->customPlot->replot();
-    qDebug() << "sadsadasd";
 }
 
-void MainWindow::getQVectors(QVector<double> LAM, QVector<double> SPC){
-    lambVecGUI = LAM;
+void MainWindow::getQVectors( QVector<double> SPC){
     spectrumGUI = SPC;
-    qDebug() << "all your vector belong to us";
     refreshPlot();
+}
+void MainWindow::readParams(){
+    params.lambdaMin = ui->lineInLambdaMin->text().toInt();
+    params.lambdaMax = ui->lineInLambdaMax->text().toInt();
+    // NO PLOT FLIPPING pls
+    params.lambdaMax = (params.lambdaMax > params.lambdaMin) ?
+                        params.lambdaMax : params.lambdaMin+100;
+    ui->lineInLambdaMax->setText(QString::number(params.lambdaMax));
+    //
+    params.temp = ui->lineInTemp->text().toInt();
+    params.period = ui->lineInPeriod->text().toInt();
+    params.noise = ui->lineInNoise->text().toInt();
+    emit sendParams(params.temp,
+                    params.period,
+                    params.noise);
 }
 
 
@@ -90,6 +128,10 @@ void MainWindow::initGUI(){
     ui->lineInNoise->setText(QString::number(7));
 
 
+}
+void MainWindow::renameButton(bool test){
+    QString name = test ? "STOP" : "START";
+    ui->buttonStartStop->setText(name);
 }
 
 MainWindow::~MainWindow()
