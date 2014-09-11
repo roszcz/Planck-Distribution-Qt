@@ -2,18 +2,42 @@
 #include <QDebug>
 
 Generator::Generator(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    spectrum(RESOLUTION),
+    lambVec(RESOLUTION),
+    timer(new QTimer(this)),
+    TEMP(137)
 {
-    QVector<double> spectrum(QVector<double>(10));
-
-    test(spectrum);
+    QObject::connect(timer,SIGNAL(timeout()),
+                     this,SLOT(testing()));
+    timer->setInterval(10);
 
 }
-void Generator::test(QVector<double>& myVec){
+void Generator::testing(){
+    prepareVectors();
+    qDebug() << spectrum[rand()%RESOLUTION];
+    emit sendQVectors(lambVec,spectrum);
+    qDebug() << "vectors sent";
 
-    for(auto& i : myVec){
-        i = rand()%100;
-        qDebug() << i << "SAD";
+}
+void Generator::prepareVectors(){
+
+    for(int i = 0; i < RESOLUTION; ++i){
+        lambVec[i] = i + 1;
+        spectrum[i] = pow( (i-160.0)/160.0, 2 ) + (rand()%100)/600.;
     }
-    qDebug() << "test";
+
+    qDebug() << spectrum[123] << "sda";
+
+}
+void Generator::startStop(bool test){
+
+    if (test){
+        qDebug() << "true" << spectrum[rand()%RESOLUTION];
+        startTimer();
+
+    }else{
+        qDebug() << "not"<< lambVec[rand()%RESOLUTION];;
+        stopTimer();
+    }
 }

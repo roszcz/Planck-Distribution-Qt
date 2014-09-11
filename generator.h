@@ -3,20 +3,35 @@
 
 #include <QObject>
 #include <QVector>
+#include <QTimer>
 
 class Generator : public QObject
 {
     Q_OBJECT
-    static const int N = 5;
     QVector<double> spectrum;
+    QVector<double> lambVec;
+    QTimer *timer;
+    int TEMP;
 
-    void test(QVector<double>&);
+    void prepareVectors();
 public:
     explicit Generator(QObject *parent = 0);
 
 signals:
+    void sendQVectors(QVector<double>,QVector<double>);
+    void getParams();
+
 
 public slots:
+    void startStop(bool);
+//    void sendParams();
+    void testing();
+    void startTimer(){timer->start();}
+    void stopTimer(){timer->stop();}
+
+
+private:
+    enum { RESOLUTION = 321 };
 
 };
 
