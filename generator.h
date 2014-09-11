@@ -18,7 +18,6 @@ class Generator : public QObject
     Q_OBJECT
     QVector<double> spectrum;
     QVector<double> lambVec;
-    QVector<double> lambPovFive;
     QTimer *timer;
     deviceParams params;
     double normConst;

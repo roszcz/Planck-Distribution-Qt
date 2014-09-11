@@ -5,7 +5,6 @@ Generator::Generator(QObject *parent) :
     QObject(parent),
     spectrum(RESOLUTION),
     lambVec(RESOLUTION),
-    lambPovFive(RESOLUTION),
     timer(new QTimer(this))
 {
     QObject::connect(timer,SIGNAL(timeout()),
@@ -18,7 +17,6 @@ void Generator::prepareDimensionHacks(){
     for (int i = 0; i < RESOLUTION; ++i){
         // lambda = [0,....,2];
         lambVec[i] = (1.0+i)/RESOLUTION;
-        lambPovFive[i] = pow(lambVec[i],-5);
     }
     normConst = 15.0/pow(3.1415,4);
     qDebug() << normConst;
@@ -41,7 +39,7 @@ void Generator::prepareVectors(){
 //        lambVec[i] = i + 1;
 //        spectrum[i] = pow( (i-1024.0+params.temp)/1024.0, 2 ) +
 //                      params.noise*(rand()%100)/10000.;
-        spectrum[i] = normConst*lambPovFive[i]*
+        spectrum[i] = normConst*pow(lambVec[i],-5)*
                       1.0/(exp(1.0/(lambVec[i]*tempConv(params.temp)))-1) +
                       params.noise*(rand()%100)/10000.0;
     }
@@ -60,12 +58,12 @@ void Generator::changePeriod(){
 void Generator::startStop(bool test){
 
     if (test){
-        qDebug() << "true" << spectrum[rand()%RESOLUTION];
+//        qDebug() << "true" << spectrum[rand()%RESOLUTION];
         changePeriod();
         startTimer();
 
     }else{
-        qDebug() << "not"<< lambVec[rand()%RESOLUTION];;
+//        qDebug() << "not"<< lambVec[rand()%RESOLUTION];
         stopTimer();
     }
 }

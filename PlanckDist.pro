@@ -15,12 +15,12 @@ QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ../../Libs/qcustomplot/qcustomplot.cpp \
-    generator.cpp
+        qcustomplot.cpp \
+        generator.cpp
 
 HEADERS  += mainwindow.h \
-    ../../Libs/qcustomplot/qcustomplot.h \
-    generator.h
+        qcustomplot.h \
+        generator.h
 
 FORMS    += mainwindow.ui
 
