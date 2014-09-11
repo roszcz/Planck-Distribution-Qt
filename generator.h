@@ -25,24 +25,20 @@ class Generator : public QObject
     void prepareDimensionHacks();
     void prepareVectors();
     inline double tempConv(int);
+
 public:
     explicit Generator(QObject *parent = 0);
-public slots:
-    void changePeriod();
 
 signals:
     void sendQVectors(QVector<double>);
-    void requestParams();
-
-
 
 public slots:
     void startStop(bool);
     void getParams(int,int,int);
+    void changePeriod();
     void doStuff();
     void startTimer(){timer->start();}
     void stopTimer(){timer->stop();}
-
 
 private:
     enum { RESOLUTION = 2048 };

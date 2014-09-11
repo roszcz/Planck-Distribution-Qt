@@ -26,9 +26,15 @@ class MainWindow : public QMainWindow
     QThread *thread;
     guiParams params;
 
+    void initGUI();
+    void initPLOT();
+    void initGenerator();
+    void refreshPlot();
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
 signals:
     void sendParams(int,int,int);
 
@@ -40,12 +46,6 @@ public slots:
 
 private:
     Ui::MainWindow *ui;
-
-    void initGUI();
-    void initPLOT();
-    void initGenerator();
-    void refreshPlot();
-
 
     enum { RESOLUTION = 2048 };
 
