@@ -1,5 +1,4 @@
 #include "generator.h"
-#include <QDebug>
 
 Generator::Generator(QObject *parent) :
     QObject(parent),
@@ -10,6 +9,7 @@ Generator::Generator(QObject *parent) :
     QObject::connect(timer,SIGNAL(timeout()),
                      this,SLOT(doStuff()));
     prepareDimensionHacks();
+
 }
 
 void Generator::doStuff(){

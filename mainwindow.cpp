@@ -77,7 +77,7 @@ void MainWindow::initPLOT(){
     ui->customPlot->xAxis->setLabel(xLabel);
     ui->customPlot->xAxis->setLabelFont(font);
     ui->customPlot->yAxis->setLabelFont(font);
-    ui->customPlot->yAxis->setLabel("Radiance [arb.unit.]");
+    ui->customPlot->yAxis->setLabel("R [arb.unit.]");
     ui->customPlot->xAxis->setRange(1,2000);
     ui->customPlot->yAxis->setRange(0,4);
     ui->customPlot->replot();

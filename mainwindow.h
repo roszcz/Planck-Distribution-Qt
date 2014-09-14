@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QThread>
 #include <QDebug>
+#include <math.h>
 #include "generator.h"
 
 namespace Ui {
@@ -25,6 +26,7 @@ class MainWindow : public QMainWindow
     Generator *generator;
     QThread *thread;
     guiParams params;
+
 
     void initGUI();
     void initPLOT();
@@ -48,8 +50,6 @@ private:
     Ui::MainWindow *ui;
 
     enum { RESOLUTION = 2048 };
-
-
 
 };
 

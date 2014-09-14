@@ -19,11 +19,9 @@ SOURCES += main.cpp\
         generator.cpp
 
 HEADERS  += mainwindow.h \
+        generator.h \
         qcustomplot.h \
-        generator.h
 
 FORMS    += mainwindow.ui
 
-CONFIG += mobility
-MOBILITY = 
 

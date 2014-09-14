@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QVector>
 #include <QTimer>
-#include <math.h>
 
 
 struct deviceParams {
